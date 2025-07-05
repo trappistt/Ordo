@@ -34,22 +34,30 @@ export default function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-2">
-        <Button variant="ghost" className="w-full justify-start bg-blue-50 text-primary hover:bg-blue-100">
-          <Home className="w-5 h-5 mr-3" />
-          Dashboard
-        </Button>
-        <Button variant="ghost" className="w-full justify-start text-gray-700 hover:bg-gray-50">
-          <CheckSquare className="w-5 h-5 mr-3" />
-          Tasks
-        </Button>
-        <Button variant="ghost" className="w-full justify-start text-gray-700 hover:bg-gray-50">
-          <Calendar className="w-5 h-5 mr-3" />
-          Calendar
-        </Button>
-        <Button variant="ghost" className="w-full justify-start text-gray-700 hover:bg-gray-50">
-          <Bot className="w-5 h-5 mr-3" />
-          AI Assistant
-        </Button>
+        <Link href="/">
+          <Button variant="ghost" className="w-full justify-start bg-blue-50 text-primary hover:bg-blue-100">
+            <Home className="w-5 h-5 mr-3" />
+            Dashboard
+          </Button>
+        </Link>
+        <Link href="/tasks">
+          <Button variant="ghost" className="w-full justify-start text-gray-700 hover:bg-gray-50">
+            <CheckSquare className="w-5 h-5 mr-3" />
+            Tasks
+          </Button>
+        </Link>
+        <Link href="/calendar">
+          <Button variant="ghost" className="w-full justify-start text-gray-700 hover:bg-gray-50">
+            <Calendar className="w-5 h-5 mr-3" />
+            Calendar
+          </Button>
+        </Link>
+        <Link href="/ai-assistant">
+          <Button variant="ghost" className="w-full justify-start text-gray-700 hover:bg-gray-50">
+            <Bot className="w-5 h-5 mr-3" />
+            AI Assistant
+          </Button>
+        </Link>
         <Link href="/settings">
           <Button variant="ghost" className="w-full justify-start text-gray-700 hover:bg-gray-50">
             <Plug className="w-5 h-5 mr-3" />

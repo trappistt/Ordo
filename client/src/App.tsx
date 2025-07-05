@@ -7,6 +7,9 @@ import NotFound from "@/pages/not-found";
 import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import Settings from "@/pages/settings";
+import TasksPage from "@/pages/tasks";
+import CalendarPage from "@/pages/calendar";
+import AIAssistantPage from "@/pages/ai-assistant";
 import { useAuth } from "@/hooks/useAuth";
 
 function Router() {
@@ -19,6 +22,9 @@ function Router() {
       ) : (
         <>
           <Route path="/" component={Dashboard} />
+          <Route path="/tasks" component={TasksPage} />
+          <Route path="/calendar" component={CalendarPage} />
+          <Route path="/ai-assistant" component={AIAssistantPage} />
           <Route path="/settings" component={Settings} />
         </>
       )}
