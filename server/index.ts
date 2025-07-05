@@ -1,7 +1,7 @@
 import "./config"; // Load environment variables first
 import express, { type Request, Response, NextFunction } from "express";
-import { registerLocalRoutes } from "./local-routes";
-import { setupLocalAuth } from "./localAuth";
+import { registerDemoRoutes } from "./demo-routes";
+import { setupAuth } from "./replitAuth";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
@@ -39,10 +39,10 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Setup local authentication
-  await setupLocalAuth(app);
+  // Setup production authentication
+  await setupAuth(app);
   
-  const server = await registerLocalRoutes(app);
+  const server = await registerDemoRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
