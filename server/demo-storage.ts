@@ -1,5 +1,6 @@
 // Demo storage with sample data for showcasing features
-import type { IStorage, User, UpsertUser, Task, InsertTask, CalendarEvent, InsertCalendarEvent, AiPlan, UserPreferences, InsertUserPreferences } from './storage';
+import type { IStorage } from './storage';
+import type { User, UpsertUser, Task, InsertTask, CalendarEvent, InsertCalendarEvent, AiPlan, UserPreferences, InsertUserPreferences, CalendarIntegration, InsertCalendarIntegration } from '@shared/schema';
 
 // Sample demo data
 const demoUser: User = {

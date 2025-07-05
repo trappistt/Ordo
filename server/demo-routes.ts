@@ -3,6 +3,8 @@ import { createServer, type Server } from "http";
 import { DemoStorage } from "./demo-storage";
 import { insertTaskSchema, insertCalendarEventSchema, insertUserPreferencesSchema } from "@shared/schema";
 import { generateAiPlan } from "./services/openai";
+import { googleCalendarService } from "./services/google-calendar";
+import { outlookCalendarService } from "./services/outlook-calendar";
 
 const demoStorage = new DemoStorage();
 
@@ -169,6 +171,84 @@ export async function registerDemoRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating preferences:", error);
       res.status(400).json({ message: "Failed to update preferences" });
+    }
+  });
+
+  // Calendar integration routes (demo mode - shows setup instructions)
+  app.get('/api/calendar/integrations', demoAuth, async (req: any, res) => {
+    // In demo mode, return empty array to show integration setup UI
+    res.json([]);
+  });
+
+  // Google Calendar OAuth routes
+  app.get('/api/auth/google', (req, res) => {
+    // In demo mode, return setup instructions
+    res.json({
+      message: "Calendar integration setup required",
+      instructions: [
+        "1. Go to Google Cloud Console (https://console.cloud.google.com/)",
+        "2. Create a new project or select existing one",
+        "3. Enable Google Calendar API",
+        "4. Create OAuth 2.0 credentials",
+        "5. Add your domain to authorized origins",
+        "6. Set environment variables: GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET"
+      ],
+      authUrl: googleCalendarService.getAuthUrl()
+    });
+  });
+
+  app.get('/api/auth/google/callback', async (req, res) => {
+    try {
+      const { code } = req.query;
+      if (!code) {
+        return res.status(400).json({ message: "Authorization code required" });
+      }
+
+      // Exchange code for tokens
+      const tokens = await googleCalendarService.exchangeCodeForTokens(code as string);
+      
+      // In a real app, save tokens to database
+      // For demo, just redirect with success message
+      res.redirect('/?calendar=google&status=connected');
+    } catch (error) {
+      console.error("Google OAuth callback error:", error);
+      res.redirect('/?calendar=google&status=error');
+    }
+  });
+
+  // Outlook Calendar OAuth routes
+  app.get('/api/auth/outlook', (req, res) => {
+    // In demo mode, return setup instructions
+    res.json({
+      message: "Outlook Calendar integration setup required",
+      instructions: [
+        "1. Go to Azure Portal (https://portal.azure.com/)",
+        "2. Navigate to App registrations",
+        "3. Create a new registration",
+        "4. Add Calendar.ReadWrite permissions",
+        "5. Generate client secret",
+        "6. Set environment variables: OUTLOOK_CLIENT_ID, OUTLOOK_CLIENT_SECRET"
+      ],
+      authUrl: outlookCalendarService.getAuthUrl()
+    });
+  });
+
+  app.get('/api/auth/outlook/callback', async (req, res) => {
+    try {
+      const { code } = req.query;
+      if (!code) {
+        return res.status(400).json({ message: "Authorization code required" });
+      }
+
+      // Exchange code for tokens
+      const tokens = await outlookCalendarService.exchangeCodeForTokens(code as string);
+      
+      // In a real app, save tokens to database
+      // For demo, just redirect with success message
+      res.redirect('/?calendar=outlook&status=connected');
+    } catch (error) {
+      console.error("Outlook OAuth callback error:", error);
+      res.redirect('/?calendar=outlook&status=error');
     }
   });
 

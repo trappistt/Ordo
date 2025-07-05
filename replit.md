@@ -24,21 +24,24 @@ The application follows a full-stack monorepo architecture with clear separation
 
 ### Frontend Architecture
 - **Component Structure**: Modular UI components using shadcn/ui design system
-- **Routing**: File-based routing with wouter library
+- **Routing**: File-based routing with wouter library (Dashboard, Settings pages)
 - **State Management**: TanStack Query for server state, React hooks for local state
 - **Authentication**: Integrated Replit Auth with automatic redirects for unauthenticated users
 - **Responsive Design**: Mobile-first approach with Tailwind CSS
+- **Calendar Integration UI**: Dedicated settings page with provider connection management
 
 ### Backend Architecture
-- **API Layer**: RESTful endpoints for tasks, calendar events, AI plans, and user preferences
+- **API Layer**: RESTful endpoints for tasks, calendar events, AI plans, and calendar integrations
 - **Authentication Middleware**: Replit Auth integration with session management
 - **Database Layer**: Drizzle ORM with type-safe schema definitions
-- **Service Layer**: Separate services for OpenAI integration and calendar synchronization
+- **Service Layer**: OpenAI integration, Google Calendar API, and Outlook Calendar API
+- **OAuth Integration**: Complete OAuth 2.0 flows for Google and Microsoft services
 
 ### Database Schema
 - **Users**: User profiles with Replit Auth integration
 - **Tasks**: Task management with categories, priorities, and completion tracking
 - **Calendar Events**: Multi-source calendar event storage with external ID mapping
+- **Calendar Integrations**: OAuth token storage for connected calendar providers
 - **AI Plans**: AI-generated daily optimization plans and suggestions
 - **User Preferences**: Customizable user settings for AI recommendations
 - **Sessions**: Secure session storage for authentication
@@ -103,6 +106,7 @@ The application follows a full-stack monorepo architecture with clear separation
 
 Changelog:
 - July 04, 2025. Initial setup
+- July 05, 2025. Added Google Calendar and Outlook integration with OAuth 2.0 flows, calendar synchronization services, settings page, and dedicated calendar integration UI components
 
 ## User Preferences
 

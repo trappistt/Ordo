@@ -8,6 +8,7 @@ import CalendarView from "@/components/CalendarView";
 import AIAssistant from "@/components/AIAssistant";
 import QuickStats from "@/components/QuickStats";
 import AddTaskModal from "@/components/AddTaskModal";
+import CalendarIntegration from "@/components/CalendarIntegration";
 import { Button } from "@/components/ui/button";
 import { Plus, Sparkles } from "lucide-react";
 import { useState } from "react";
