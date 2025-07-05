@@ -1,12 +1,27 @@
 import "./config"; // Load environment variables first
 import express, { type Request, Response, NextFunction } from "express";
+import session from "express-session";
 import { registerDemoRoutes } from "./demo-routes";
+import { registerRealRoutes } from "./real-routes";
+import { setupAuthRoutes } from "./auth-routes";
 import { setupAuth } from "./replitAuth";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Session middleware
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -42,7 +57,11 @@ app.use((req, res, next) => {
   // Setup production authentication
   // await setupAuth(app); // Commented out to avoid Replit-specific env vars
   
-  const server = await registerDemoRoutes(app);
+  // Setup auth routes
+  setupAuthRoutes(app);
+  
+  // Setup real routes for authenticated users
+  const server = await registerRealRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
