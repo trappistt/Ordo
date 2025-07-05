@@ -259,9 +259,15 @@ export class DemoStorage implements IStorage {
   }
 
   async getUserCalendarEvents(userId: string, startDate: Date, endDate: Date): Promise<CalendarEvent[]> {
+    // Return today's events by default
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
     return this.events.filter(event => {
       const eventDate = new Date(event.startTime);
-      return eventDate >= startDate && eventDate <= endDate;
+      return eventDate >= today && eventDate < tomorrow;
     });
   }
 

@@ -12,11 +12,10 @@ export default function CalendarView() {
   tomorrow.setDate(tomorrow.getDate() + 1);
 
   const { data: events = [], isLoading } = useQuery<CalendarEvent[]>({
-    queryKey: ["/api/calendar/events", { 
-      start: today.toISOString(), 
-      end: tomorrow.toISOString() 
-    }],
+    queryKey: ["/api/calendar/events"],
     retry: false,
+    refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   const getEventColor = (source: string, isAiGenerated: boolean) => {
