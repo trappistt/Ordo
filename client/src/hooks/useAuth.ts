@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "./use-toast";
+import { useEffect, useState } from "react";
 
 interface User {
   id: string;
@@ -23,11 +24,33 @@ interface LoginData {
 export function useAuth() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [isChecking, setIsChecking] = useState(true);
 
-  const { data: user, isLoading } = useQuery({
+  const { data: user, isLoading, error, refetch } = useQuery({
     queryKey: ["/api/auth/user"],
     retry: false,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    staleTime: Infinity,
+    gcTime: 5 * 60 * 1000, // 5 minutes
+    enabled: false, // Disable automatic fetching
   });
+
+  // Check authentication status on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        await refetch();
+      } catch (error) {
+        // User is not authenticated, which is expected
+      } finally {
+        setIsChecking(false);
+      }
+    };
+
+    checkAuth();
+  }, [refetch]);
 
   const registerMutation = useMutation({
     mutationFn: async (data: RegisterData) => {
@@ -125,7 +148,7 @@ export function useAuth() {
 
   return {
     user,
-    isLoading,
+    isLoading: isLoading || isChecking,
     isAuthenticated: !!user,
     register: registerMutation.mutate,
     login: loginMutation.mutate,
