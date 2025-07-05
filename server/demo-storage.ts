@@ -222,7 +222,12 @@ export class DemoStorage implements IStorage {
     const newTask: Task = {
       id: this.nextTaskId++,
       userId,
-      ...task,
+      title: task.title,
+      description: task.description || null,
+      category: task.category,
+      priority: task.priority || "medium",
+      dueDate: task.dueDate || null,
+      estimatedDuration: task.estimatedDuration || null,
       completed: task.completed || false,
       completedAt: null,
       createdAt: new Date(),
@@ -276,7 +281,14 @@ export class DemoStorage implements IStorage {
     const newEvent: CalendarEvent = {
       id: this.events.length + 1,
       userId,
-      ...event,
+      title: event.title,
+      description: event.description || null,
+      externalId: event.externalId || null,
+      startTime: event.startTime,
+      endTime: event.endTime,
+      location: event.location || null,
+      source: event.source,
+      isAiGenerated: event.isAiGenerated || false,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -329,7 +341,10 @@ export class DemoStorage implements IStorage {
     return {
       id: 1,
       userId,
-      ...preferences,
+      workingHours: preferences.workingHours || null,
+      timeZone: preferences.timeZone || "America/New_York",
+      aiEnabled: preferences.aiEnabled || true,
+      notifications: preferences.notifications || null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

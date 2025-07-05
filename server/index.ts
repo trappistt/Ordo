@@ -1,5 +1,7 @@
+import "./config"; // Load environment variables first
 import express, { type Request, Response, NextFunction } from "express";
-import { registerDemoRoutes } from "./demo-routes";
+import { registerLocalRoutes } from "./local-routes";
+import { setupLocalAuth } from "./localAuth";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
@@ -37,7 +39,10 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  const server = await registerDemoRoutes(app);
+  // Setup local authentication
+  await setupLocalAuth(app);
+  
+  const server = await registerLocalRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
@@ -56,15 +61,10 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on port 5000
+  // ALWAYS serve the app on port 3000 (changed from 5001 to avoid conflicts)
   // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
+  const port = 3000;
+  server.listen(port, "0.0.0.0", () => {
     log(`serving on port ${port}`);
   });
 })();
