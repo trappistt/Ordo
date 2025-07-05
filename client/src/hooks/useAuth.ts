@@ -1,6 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "./use-toast";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
 interface User {
   id: string;
@@ -24,33 +24,32 @@ interface LoginData {
 export function useAuth() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [isChecking, setIsChecking] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const { data: user, isLoading, error, refetch } = useQuery({
-    queryKey: ["/api/auth/user"],
-    retry: false,
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    staleTime: Infinity,
-    gcTime: 5 * 60 * 1000, // 5 minutes
-    enabled: false, // Disable automatic fetching
-  });
-
-  // Check authentication status on mount
+  // Check authentication status once on mount
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        await refetch();
+        const response = await fetch("/api/auth/user", {
+          credentials: "include",
+        });
+        
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData);
+        } else {
+          setUser(null);
+        }
       } catch (error) {
-        // User is not authenticated, which is expected
+        setUser(null);
       } finally {
-        setIsChecking(false);
+        setIsLoading(false);
       }
     };
 
     checkAuth();
-  }, [refetch]);
+  }, []);
 
   const registerMutation = useMutation({
     mutationFn: async (data: RegisterData) => {
@@ -60,6 +59,7 @@ export function useAuth() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -70,7 +70,7 @@ export function useAuth() {
       return response.json();
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(["/api/auth/user"], data.user);
+      setUser(data.user);
       toast({
         title: "Success!",
         description: "Account created successfully. Welcome!",
@@ -93,6 +93,7 @@ export function useAuth() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -103,7 +104,7 @@ export function useAuth() {
       return response.json();
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(["/api/auth/user"], data.user);
+      setUser(data.user);
       toast({
         title: "Welcome back!",
         description: "Successfully logged in.",
@@ -122,6 +123,7 @@ export function useAuth() {
     mutationFn: async () => {
       const response = await fetch("/api/auth/logout", {
         method: "POST",
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -131,7 +133,7 @@ export function useAuth() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.setQueryData(["/api/auth/user"], null);
+      setUser(null);
       toast({
         title: "Logged out",
         description: "You have been successfully logged out.",
@@ -148,7 +150,7 @@ export function useAuth() {
 
   return {
     user,
-    isLoading: isLoading || isChecking,
+    isLoading,
     isAuthenticated: !!user,
     register: registerMutation.mutate,
     login: loginMutation.mutate,
