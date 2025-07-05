@@ -40,7 +40,7 @@ app.use((req, res, next) => {
 
 (async () => {
   // Setup production authentication
-  await setupAuth(app);
+  // await setupAuth(app); // Commented out to avoid Replit-specific env vars
   
   const server = await registerDemoRoutes(app);
 
